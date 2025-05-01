@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TRPCProvider from "./_trpc/provider";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
       >
         <TRPCProvider>
           {children}
+          <Toaster /> {/* Coloque o Toaster aqui */}
         </TRPCProvider>
       </body>
     </html>

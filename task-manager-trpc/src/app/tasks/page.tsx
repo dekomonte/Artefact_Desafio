@@ -1,7 +1,10 @@
+'use client';
 import { trpc } from "@/trpc/client";
 
-export default async function TasksPage() {
-  const tasks = await trpc.task.list.query();
+export default function TasksPage() {
+  const { data: tasks = [], isLoading } = trpc.task.list.useQuery();
+
+  if (isLoading) return <p>Carregando tarefas...</p>;
 
   return (
     <div className="p-4">
@@ -11,7 +14,9 @@ export default async function TasksPage() {
           <li key={task.id} className="p-4 border rounded">
             <h2 className="font-semibold">{task.titulo}</h2>
             {task.descricao && <p>{task.descricao}</p>}
-            <p className="text-sm text-gray-500">{new Date(task.dataCriacao).toLocaleString()}</p>
+            <p className="text-sm text-gray-500">
+              {new Date(task.dataCriacao).toLocaleString()}
+            </p>
           </li>
         ))}
       </ul>

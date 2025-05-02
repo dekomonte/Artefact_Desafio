@@ -1,18 +1,25 @@
 'use client';
 
 import { trpc } from "@/trpc/client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function EditTaskPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const taskId = params.id;
 
-  const { data: tasks = [] } = trpc.task.list.useQuery(); // usar cache simples
+  const { data: tasks = [], isLoading } = trpc.task.list.useQuery();
   const task = tasks.find(t => t.id === taskId);
 
   const updateTask = trpc.task.update.useMutation({
-    onSuccess: () => router.push("/tasks"),
+    onSuccess: () => {
+      toast.success("Tarefa atualizada com sucesso!");
+      router.push("/tasks");
+    },
+    onError: () => {
+      toast.error("Erro ao atualizar tarefa.");
+    }
   });
 
   const [titulo, setTitulo] = useState("");
@@ -25,6 +32,7 @@ export default function EditTaskPage({ params }: { params: { id: string } }) {
     }
   }, [task]);
 
+  if (isLoading) return <p>Carregando tarefa...</p>;
   if (!task) return <p>Tarefa não encontrada.</p>;
 
   return (
@@ -43,11 +51,11 @@ export default function EditTaskPage({ params }: { params: { id: string } }) {
         />
         <textarea
           className="border p-2 mb-2 w-full"
-          placeholder="Descrição"
+          placeholder="Descrição (opcional)"
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
         />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">
+        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors" type="submit">
           Salvar Alterações
         </button>
       </form>

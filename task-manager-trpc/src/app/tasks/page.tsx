@@ -2,7 +2,6 @@
 
 import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function TasksPage() {
@@ -32,7 +31,10 @@ export default function TasksPage() {
 
       <ul className="space-y-2">
         {tasks.map(task => (
-          <li key={task.id} className="p-4 border rounded flex justify-between items-start">
+          <li
+            key={task.id}
+            className="p-4 border rounded flex justify-between items-start"
+          >
             <div>
               <h2 className="font-semibold">{task.titulo}</h2>
               {task.descricao && <p>{task.descricao}</p>}
@@ -40,12 +42,20 @@ export default function TasksPage() {
                 {new Date(task.dataCriacao).toLocaleString()}
               </p>
             </div>
-            <button
-              className="text-red-500 hover:underline ml-4"
-              onClick={() => deleteTask.mutate({ id: task.id })}
-            >
-              Excluir
-            </button>
+            <div className="flex flex-col items-end gap-2 ml-4">
+              <button
+                onClick={() => router.push(`/tasks/${task.id}/edit`)}
+                className="text-blue-600 hover:underline"
+              >
+                Editar
+              </button>
+              <button
+                className="text-red-500 hover:underline"
+                onClick={() => deleteTask.mutate({ id: task.id })}
+              >
+                Excluir
+              </button>
+            </div>
           </li>
         ))}
       </ul>
